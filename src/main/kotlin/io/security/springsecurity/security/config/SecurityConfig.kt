@@ -14,7 +14,7 @@ class SecurityConfig(val userDetailsService: UserDetailsService) {
             .anyRequest().authenticated()
             .and()
             .formLogin()
-            // 3) form login 인증
+        // 3) form login 인증
 //            .loginPage("/loginPage")
 //            .defaultSuccessUrl("/")
 //            .failureUrl("/login")
@@ -30,7 +30,7 @@ class SecurityConfig(val userDetailsService: UserDetailsService) {
 //                response.sendRedirect("/login")
 //            }
 
-            // 5) logout
+        // 5) logout
 //            .and()
 //            .logout()
 //            .logoutUrl("/logout")
@@ -44,11 +44,24 @@ class SecurityConfig(val userDetailsService: UserDetailsService) {
 //                response.sendRedirect("/login")
 //            }
 //            .deleteCookies("remember-me")
-            .and()
-            .rememberMe()
-            .rememberMeParameter("remember")
-            .tokenValiditySeconds(3600)
-            .userDetailsService(userDetailsService)
+
+        // 6) remember me
+//            .and()
+//            .rememberMe()
+//            .rememberMeParameter("remember")
+//            .tokenValiditySeconds(3600)
+//            .userDetailsService(userDetailsService)
+
+        // 9) 동시 세션 제어
+//            .and()
+//            .sessionManagement()
+//            .maximumSessions(1)
+//            .maxSessionsPreventsLogin(true)
+
+        // 9) 세션 고정 보호
+//            .and()
+//            .sessionManagement()
+//            .sessionFixation().changeSessionId()
         return http.build()
     }
 }
