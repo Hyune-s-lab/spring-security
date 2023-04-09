@@ -13,6 +13,20 @@ class SecurityConfig {
             .anyRequest().authenticated()
             .and()
             .formLogin()
+            .loginPage("/loginPage")
+            .defaultSuccessUrl("/")
+            .failureUrl("/login")
+            .usernameParameter("username")
+            .passwordParameter("password")
+            .loginProcessingUrl("/login_proc")
+            .successHandler { _, response, authentication ->
+                println("### authentication: ${authentication.name}")
+                response.sendRedirect("/")
+            }
+            .failureHandler { _, response, exception ->
+                println("### exception: ${exception.message}")
+                response.sendRedirect("/login")
+            }
         return http.build()
     }
 }
