@@ -13,20 +13,34 @@ class SecurityConfig {
             .anyRequest().authenticated()
             .and()
             .formLogin()
-            .loginPage("/loginPage")
-            .defaultSuccessUrl("/")
-            .failureUrl("/login")
-            .usernameParameter("username")
-            .passwordParameter("password")
-            .loginProcessingUrl("/login_proc")
-            .successHandler { _, response, authentication ->
-                println("### authentication: ${authentication.name}")
-                response.sendRedirect("/")
+            // 3) form login 인증
+//            .loginPage("/loginPage")
+//            .defaultSuccessUrl("/")
+//            .failureUrl("/login")
+//            .usernameParameter("username")
+//            .passwordParameter("password")
+//            .loginProcessingUrl("/login_proc")
+//            .successHandler { _, response, authentication ->
+//                println("### authentication: ${authentication.name}")
+//                response.sendRedirect("/")
+//            }
+//            .failureHandler { _, response, exception ->
+//                println("### exception: ${exception.message}")
+//                response.sendRedirect("/login")
+//            }
+            .and()
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login")
+            .addLogoutHandler { request, _, _ ->
+                println("### logout handler")
+                request.session.invalidate()
             }
-            .failureHandler { _, response, exception ->
-                println("### exception: ${exception.message}")
+            .logoutSuccessHandler { _, response, _ ->
+                println("### logout success handler")
                 response.sendRedirect("/login")
             }
+            .deleteCookies("remember-me")
         return http.build()
     }
 }
