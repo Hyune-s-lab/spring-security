@@ -3,17 +3,46 @@ package io.security.springsecurity.security.config
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
-class SecurityConfig(val userDetailsService: UserDetailsService) {
+class SecurityConfig {
+    @Bean
+    fun userDetailsService(): InMemoryUserDetailsManager {
+        val allUserDetails = listOf(
+            User.builder()
+                .username("user")
+                .password("{noop}1111")
+                .roles("USER")
+                .build(),
+            User.builder()
+                .username("admin")
+                .password("{noop}1111")
+                .roles("ADMIN")
+                .build(),
+            User.builder()
+                .username("sys")
+                .password("{noop}1111")
+                .roles("SYS")
+                .build()
+        )
+        return InMemoryUserDetailsManager(allUserDetails)
+    }
+
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeRequests()
+
+            .antMatchers("/user").hasRole("USER")
+            .antMatchers("/admin/pay").hasRole("ADMIN")
+            .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
+
             .anyRequest().authenticated()
             .and()
             .formLogin()
+
         // 3) form login 인증
 //            .loginPage("/loginPage")
 //            .defaultSuccessUrl("/")
