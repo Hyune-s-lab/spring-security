@@ -24,4 +24,14 @@ class SecurityController {
     fun admin(): String {
         return "admin"
     }
+
+    @GetMapping("/denied")
+    fun denied(): String {
+        return "Access is denied"
+    }
+
+    @GetMapping("/login")
+    fun login(): String {
+        return "login"
+    }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache
 
 @Configuration
 class SecurityConfig {
@@ -35,13 +36,29 @@ class SecurityConfig {
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeRequests()
 
+            .antMatchers("/login").permitAll()
             .antMatchers("/user").hasRole("USER")
             .antMatchers("/admin/pay").hasRole("ADMIN")
             .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
 
             .anyRequest().authenticated()
+
             .and()
             .formLogin()
+            .successHandler { request, response, _ ->
+                val httpSessionRequestCache = HttpSessionRequestCache()
+                val savedRequest = httpSessionRequestCache.getRequest(request, response)
+                response.sendRedirect(savedRequest.redirectUrl)
+            }
+
+            .and()
+            .exceptionHandling()
+//            .authenticationEntryPoint { _, response, _ ->
+//                response.sendRedirect("/login")
+//            }
+            .accessDeniedHandler { _, response, _ ->
+                response.sendRedirect("/denied")
+            }
 
         // 3) form login 인증
 //            .loginPage("/loginPage")
