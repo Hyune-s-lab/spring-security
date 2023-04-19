@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache
 
 @Configuration
 class SecurityConfig {
@@ -35,30 +34,31 @@ class SecurityConfig {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeRequests()
-
-            .antMatchers("/login").permitAll()
-            .antMatchers("/user").hasRole("USER")
-            .antMatchers("/admin/pay").hasRole("ADMIN")
-            .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
-
-            .anyRequest().authenticated()
-
+            .anyRequest().permitAll()
             .and()
             .formLogin()
-            .successHandler { request, response, _ ->
-                val httpSessionRequestCache = HttpSessionRequestCache()
-                val savedRequest = httpSessionRequestCache.getRequest(request, response)
-                response.sendRedirect(savedRequest.redirectUrl)
-            }
 
-            .and()
-            .exceptionHandling()
+        // 12) 예외 처리 및 요청 캐시 필터
+//            .antMatchers("/login").permitAll()
+//            .antMatchers("/user").hasRole("USER")
+//            .antMatchers("/admin/pay").hasRole("ADMIN")
+//            .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
+//            .anyRequest().authenticated()
+//            .and()
+//            .formLogin()
+//            .successHandler { request, response, _ ->
+//                val httpSessionRequestCache = HttpSessionRequestCache()
+//                val savedRequest = httpSessionRequestCache.getRequest(request, response)
+//                response.sendRedirect(savedRequest.redirectUrl)
+//            }
+//            .and()
+//            .exceptionHandling()
 //            .authenticationEntryPoint { _, response, _ ->
 //                response.sendRedirect("/login")
 //            }
-            .accessDeniedHandler { _, response, _ ->
-                response.sendRedirect("/denied")
-            }
+//            .accessDeniedHandler { _, response, _ ->
+//                response.sendRedirect("/denied")
+//            }
 
         // 3) form login 인증
 //            .loginPage("/loginPage")
