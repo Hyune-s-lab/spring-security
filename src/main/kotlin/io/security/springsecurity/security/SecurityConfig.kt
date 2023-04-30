@@ -1,5 +1,6 @@
 package io.security.springsecurity.security
 
+import io.security.springsecurity.security.common.CustomWebAuthenticationDetailsSource
 import io.security.springsecurity.security.provider.CustomAuthenticationProvider
 import io.security.springsecurity.security.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
@@ -14,7 +15,10 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(private val userDetailsService: CustomUserDetailsService) {
+class SecurityConfig(
+    private val userDetailsService: CustomUserDetailsService,
+    private val customWebAuthenticationDetailsSource: CustomWebAuthenticationDetailsSource
+) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
@@ -43,6 +47,7 @@ class SecurityConfig(private val userDetailsService: CustomUserDetailsService) {
                     .anyRequest().authenticated()
             }
             .httpBasic()
+            .authenticationDetailsSource(customWebAuthenticationDetailsSource)
         return http.build()
     }
 }
