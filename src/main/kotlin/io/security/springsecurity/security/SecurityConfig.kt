@@ -1,5 +1,7 @@
 package io.security.springsecurity.security
 
+import io.security.springsecurity.security.provider.CustomAuthenticationProvider
+import io.security.springsecurity.security.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -12,10 +14,15 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(private val userDetailsService: CustomUserDetailsService) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    fun customAuthenticationProvider(): CustomAuthenticationProvider {
+        return CustomAuthenticationProvider(passwordEncoder(), userDetailsService)
     }
 
     @Bean
